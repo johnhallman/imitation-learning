@@ -17,6 +17,9 @@ from keras.layers import Dense, Input, Activation
 from keras.optimizers import Adam, Adagrad, Adadelta
 
 
+ENVIRONMENT = "Pendulum-v0"
+
+# policy class
 class Policy(Model):
 	def __init__(self, model):
 		super(Policy, self).__init__(name='policy')
@@ -27,12 +30,12 @@ class Policy(Model):
 		model = Sequential()
 		if layers > 1:
 			if not hidden_dim: hidden_dim = max(state_dim, action_dim)
-			model.add(Dense(hidden_dim, input_dim=state_dim, kernel_initializer='normal', activation='relu'))
+			model.add(Dense(hidden_dim, input_dim=state_dim, activation='relu'))
 			for i in range(layers - 2):
-				model.add(Dense(hidden_dim, kernel_initializer='normal', activation='relu'))
-			model.add(Dense(action_dim, kernel_initializer='normal', activation='linear'))
+				model.add(Dense(hidden_dim, activation='relu'))
+			model.add(Dense(action_dim, activation='linear'))
 		else:
-			model.add(Dense(action_dim, input_dim=state_dim, kernel_initializer='normal', activation='sigmoid'))
+			model.add(Dense(action_dim, input_dim=state_dim, activation='linear'))
 		opt = Adam()
 		model.compile(loss='mean_squared_error', optimizer=opt, metrics=['mse'])
 		model.fit(np.array(training_data[0]), np.array(training_data[1]), epochs=epochs, batch_size=32)
